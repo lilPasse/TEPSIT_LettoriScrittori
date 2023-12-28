@@ -5,6 +5,6 @@ public class mainGaia {
 
 		System.out.print("Hello Matteo");
 		System.out.print("Hello Gaia");
-		System.out.print("per favore ti prego");
+		System.out.print("per favore ti prego dai");
 	}
 }
