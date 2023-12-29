@@ -10,6 +10,6 @@ public class mainGaia {
 	
 		System.out.print("Hello Gaia");
 		
-		System.out.print("Hello Luca");
+		System.out.print("Hello, Luca");
 	}
 }
