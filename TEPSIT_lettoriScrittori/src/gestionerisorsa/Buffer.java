@@ -1,5 +1,6 @@
 package gestionerisorsa;
 
+//da rifinire
 public class Buffer {
 	
 	private String msg;

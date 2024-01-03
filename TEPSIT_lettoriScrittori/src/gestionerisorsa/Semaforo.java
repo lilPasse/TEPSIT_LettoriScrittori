@@ -1,5 +1,6 @@
 package gestionerisorsa;
 
+//da rifinire
 public class Semaforo {
 	
 	private int molteplicita;
