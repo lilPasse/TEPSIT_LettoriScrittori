@@ -9,5 +9,7 @@ public class mainGaia {
 		System.out.print("sono cosimo sono entrato");
 	
 		System.out.print("Hello Gaia");
+		
+		System.out.print("Hello Luca");
 	}
 }
