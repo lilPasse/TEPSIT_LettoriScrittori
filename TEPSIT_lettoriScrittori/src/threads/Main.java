@@ -1,9 +1,7 @@
-package mainPackage;
+package threads;
 
 
 import gestionerisorsa.Buffer;
-import threads.Lettore;
-import threads.Scrittore;
 
 public class Main {
 	public static void main(String[] args) {
