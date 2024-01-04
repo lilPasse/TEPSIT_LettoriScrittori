@@ -50,8 +50,10 @@ public class Scrittore extends Thread {
     public void run() {
     	while(true) {
     		// Inizio scrittura dei dati condivisi (su buffer)
+    		scrivi();
             System.out.println("Scrittura dati condivisi");
-            // Concludi scrittura dei dati condivisi (su buffer)  
+            // Concludi scrittura dei dati condivisi (su buffer) 
+            rilascia();
             //accedi = true;
     	}          
     }
