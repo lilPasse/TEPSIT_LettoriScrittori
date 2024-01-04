@@ -55,6 +55,18 @@ public class Scrittore extends Thread {
             // Concludi scrittura dei dati condivisi (su buffer) 
             rilascia();
             //accedi = true;
-    	}          
+    	}  
+    	
+    	/*matteo
+		 * scrivi();
+		 * //acquisco buffer 
+		 * 
+		 * //scrivo msg
+		 * 
+		 * //rilascio buffer
+		 * 
+		 * 
+		 * rilascia();
+		 */
     }
 }
