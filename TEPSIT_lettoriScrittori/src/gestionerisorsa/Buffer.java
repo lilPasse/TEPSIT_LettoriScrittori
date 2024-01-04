@@ -26,9 +26,9 @@ public class Buffer {
 	
 	//semaforo mutex sulla risorsa
     private Semaforo mutex = new Semaforo(1);
-    
-	//due semafori (1per lettori, 1 per scrittori)--> manca tutta la gestione negli altri codici
-	
+    private Semaforo sLettori = new Semaforo();
+    private Semaforo sScrittori = new Semaforo(1);
+    	
 	public String getMsg() {
 		return msg;
 	}
@@ -37,36 +37,87 @@ public class Buffer {
 		this.msg = msg;
 	}
 
-	public int getLettoriAmmessi() {
-		return lettoriAmmessi;
-	}
+	 public void lettura(Boolean accedi) {
+	    	
+	    	 mutex.acquire();
+	    	 
+	    	 if(scrittoriInAttesa == 0 && scrittoriAmmessi == 0){
+	    	  		lettoriAmmessi++;
+	    	  		accedi = true; 
+	    	  		
+	    	 }else{
+	    	 		lettoriInAttesa ++;
+	    	 }	   
+	    	 
+	    	 mutex.release();
+	    	 
+	    	 while(!accedi){ 			//provare if
+	    		sLettori.acquire();
+	    	 }	    	  
+	    	 
+	 };
+	    
+	    public void stopLettura(Boolean accedi) {
+	    	
+	    	mutex.acquire();
+	    	
+	    	lettoriAmmessi--;
+	    	if(lettoriAmmessi == 0 && scrittoriInAttesa > 0){
+	    	  	scrittoriAmmessi = 1;
+	    	 	scrittoriInAttesa --;
+	    	  	sScrittori.release();
+	    	 
+	    	//se nessuno sta usando la risorsa/nessuno è in coda  	
+	    	}else if(lettoriAmmessi == 0 && scrittoriInAttesa == 0){
+	    		sScrittori.release();
+	    		sLettori.release();
+	    	}
 
-	public void setLettoriAmmessi(int lettoriAmmessi) {
-		this.lettoriAmmessi = lettoriAmmessi;
-	}
-
-	public int getLettoriInAttesa() {
-		return lettoriInAttesa;
-	}
-
-	public void setLettoriInAttesa(int lettoriInAttesa) {
-		this.lettoriInAttesa = lettoriInAttesa;
-	}
-
-	public int getScrittoriAmmessi() {
-		return scrittoriAmmessi;
-	}
-
-	public void setScrittoriAmmessi(int scrittoriAmmessi) {
-		this.scrittoriAmmessi = scrittoriAmmessi;
-	}
-
-	public int getScrittoriInAttesa() {
-		return scrittoriInAttesa;
-	}
-
-	public void setScrittoriInAttesa(int scrittoriInAttesa) {
-		this.scrittoriInAttesa = scrittoriInAttesa;
-	}
+	    	mutex.release();
+    		accedi = false;
+	    };
+	    
+	    public synchronized void scrittura(Boolean accedi) {
+	    	
+	    	  mutex.acquire();
+	    	  
+	    	  if(lettoriAmmessi == 0 && scrittoriAmmessi == 0){
+	    	  		scrittoriAmmessi = 1;
+	    	  		accedi = true; 
+	    	  		//(release mutex)
+	    	  }else{
+	    	  		scrittoriInAttesa ++;
+	    	  }
+		      mutex.release();
+   	  
+	    	  while(!accedi){		//provare if
+	    		  sScrittori.acquire();
+	    	  }
+	    	  
+	    	//si entra in scrittura
+	 
+	    };
+	    
+	    public synchronized void stopScrittura(Boolean accedi) {
+	    	
+	    	 mutex.acquire();
+	    	 
+	    	 scrittoriAmmessi = 0;
+	    	 if(lettoriInAttesa > 0 ){
+	    		 sLettori.release();	    	  		
+	    		 lettoriAmmessi = lettoriInAttesa;
+	    	  	 lettoriInAttesa = 0;
+	    	  	 
+	    	 }else if(scrittoriInAttesa > 0){
+	    	  		scrittoriAmmessi ++;
+	    	  		scrittoriInAttesa --;
+	    	  		sLettori.release();
+	    	 }
+	    	 
+	    	 mutex.release();
+	    	 accedi = false;
+	    	
+	    };
+	    
 
 }
