@@ -17,11 +17,13 @@ public class Scrittore extends Thread {
     public void run() {
     	while(true) {
     		// Inizio scrittura dei dati condivisi (su buffer)
+    	
     		buffer.scrittura(accedi);
             System.out.println("Scrittura dati condivisi");
             // Concludi scrittura dei dati condivisi (su buffer) 
             buffer.stopScrittura(accedi);
             //accedi = true;
+            //accedi=true;
     	}  
     	
     }
