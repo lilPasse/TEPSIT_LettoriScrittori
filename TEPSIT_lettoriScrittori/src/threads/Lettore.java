@@ -53,6 +53,7 @@ public class Lettore extends Thread {
     		// Inizio lettura dei dati condivisi (su buffer)
         	leggi();
             System.out.println("Scrittura dati condivisi");
+            // Concludi lettura dei dati condivisi (su buffer) 
             rilascia(); 
             //accedi = true;
     	}*/ 
