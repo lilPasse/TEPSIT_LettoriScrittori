@@ -4,11 +4,9 @@ import gestionerisorsa.Buffer;
 
 public class Lettore extends Thread {
     private Buffer buffer;
-    private Boolean accedi;
 
     public Lettore(Buffer buffer) {
         this.buffer = buffer;
-        this.accedi = false;
     }
 
    
@@ -17,10 +15,10 @@ public class Lettore extends Thread {
     public void run() {
     	while(true) {
     		// Inizio lettura dei dati condivisi (su buffer)
-        	buffer.lettura(accedi);
+        	buffer.lettura();
             System.out.println("Scrittura dati condivisi");
             // Concludi lettura dei dati condivisi (su buffer) 
-            buffer.stopLettura(accedi); 
+            buffer.stopLettura(); 
             //accedi = true;
     	}    	    	
    

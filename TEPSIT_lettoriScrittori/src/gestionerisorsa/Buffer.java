@@ -12,11 +12,12 @@ public class Buffer {
 	 * condivisov e quindi delle attivita in corso.
 	*/
 	
-	 private int lettoriAmmessi;
-	 private int lettoriInAttesa;
-	 private int scrittoriAmmessi;
-	 private int scrittoriInAttesa;
-	    
+	 private static int lettoriAmmessi;
+	 private static int lettoriInAttesa;
+	 private static int scrittoriAmmessi;
+	 private static int scrittoriInAttesa;
+	 private static Boolean accedi;
+	 	    
 	public Buffer() {
 		this.lettoriAmmessi= 0;
 		this.lettoriInAttesa = 0;
@@ -26,7 +27,7 @@ public class Buffer {
 	
 	//semaforo mutex sulla risorsa
     private Semaforo mutex = new Semaforo(1);
-    private Semaforo sLettori = new Semaforo();
+    private Semaforo sLettori = new Semaforo(1);
     private Semaforo sScrittori = new Semaforo(1);
     	
 	public String getMsg() {
@@ -37,9 +38,10 @@ public class Buffer {
 		this.msg = msg;
 	}
 
-	 public void lettura(Boolean accedi) {
+	 public void lettura() {
 	    	
 	    	 mutex.acquire();
+	    	 sLettori.acquire();
 	    	 
 	    	 if(scrittoriInAttesa == 0 && scrittoriAmmessi == 0){
 	    	  		lettoriAmmessi++;
@@ -49,15 +51,16 @@ public class Buffer {
 	    	 		lettoriInAttesa ++;
 	    	 }	   
 	    	 
+	    	 sLettori.release();
 	    	 mutex.release();
 	    	 
-	    	 while(!accedi){ 			//provare if
+	    	 if(!accedi){ 			//provare if
 	    		sLettori.acquire();
-	    	 }	    	  
+	    	 }	 
 	    	 
 	 };
 	    
-	    public void stopLettura(Boolean accedi) {
+	    public void stopLettura() {
 	    	
 	    	mutex.acquire();
 	    	
@@ -77,20 +80,19 @@ public class Buffer {
     		accedi = false;
 	    };
 	    
-	    public synchronized void scrittura(Boolean accedi) {
+	    public synchronized void scrittura() {
 	    	
 	    	  mutex.acquire();
-	    	  
+	    	  accedi = false;
 	    	  if(lettoriAmmessi == 0 && scrittoriAmmessi == 0){
 	    	  		scrittoriAmmessi = 1;
 	    	  		accedi = true; 
-	    	  		//(release mutex)
 	    	  }else{
 	    	  		scrittoriInAttesa ++;
 	    	  }
 		      mutex.release();
    	  
-	    	  while(!accedi){		//provare if
+	    	  if(!accedi){		//provare if
 	    		  sScrittori.acquire();
 	    	  }
 	    	  
@@ -98,7 +100,7 @@ public class Buffer {
 	 
 	    };
 	    
-	    public synchronized void stopScrittura(Boolean accedi) {
+	    public synchronized void stopScrittura() {
 	    	
 	    	 mutex.acquire();
 	    	 

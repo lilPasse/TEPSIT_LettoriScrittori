@@ -3,7 +3,7 @@ package threads;
 
 import gestionerisorsa.Buffer;
 
-public class Main {
+public class MainLettoriScrittori {
 	public static void main(String[] args) {
         Buffer buffer = new Buffer();
 

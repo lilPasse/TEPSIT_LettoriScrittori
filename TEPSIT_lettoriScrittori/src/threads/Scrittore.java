@@ -4,11 +4,9 @@ import gestionerisorsa.Buffer;
 
 public class Scrittore extends Thread {
     private Buffer buffer;
-    private Boolean accedi;
 
     public Scrittore(Buffer buffer) {
         this.buffer = buffer;
-        this.accedi = false;
 
     }
 
@@ -18,10 +16,10 @@ public class Scrittore extends Thread {
     	while(true) {
     		// Inizio scrittura dei dati condivisi (su buffer)
     	
-    		buffer.scrittura(accedi);
+    		buffer.scrittura();
             System.out.println("Scrittura dati condivisi");
             // Concludi scrittura dei dati condivisi (su buffer) 
-            buffer.stopScrittura(accedi);
+            buffer.stopScrittura();
             //accedi = true;
             //accedi=true;
     	}  
