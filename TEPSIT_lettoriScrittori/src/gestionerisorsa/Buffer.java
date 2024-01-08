@@ -34,18 +34,120 @@ public class Buffer {
     private Semaforo mutex = new Semaforo();
     private Semaforo sLettori = new Semaforo(nLettori);
     private Semaforo sScrittori = new Semaforo();			//mh
-    
-    
+        
     //synchornized perche devono essere usati in maniera mutualmente esclusiva
-	public synchronized String getMsg() {
+	public  String getMsg() {
 		return msg;		
 	}
 
 	public synchronized void setMsg(String msg) {
-		msg = msg;
+		this.msg = msg;
 	}
 
 	public synchronized void lettura(long id){
+		
+		mutex.acquire();
+		
+		while(scrittoriAmmessi > 0 || scrittoriInAttesa> 0) {
+			lettoriInAttesa ++;
+			System.out.flush();
+	    	System.out.println("L:\t lettori in attesa:\t " + lettoriInAttesa);
+	    	
+			mutex.release();
+			
+			//metto in coda
+			sLettori.acquire();
+			
+			//fine attesa
+			mutex.acquire();
+			lettoriInAttesa--;
+			System.out.flush();
+	    	System.out.println("L:\t lettori in attesa:\t " + lettoriInAttesa);
+		}
+		
+		lettoriAmmessi++;
+		System.out.flush();
+    	System.out.println("L:\t lettori ammessi:\t " + lettoriAmmessi);
+    	
+		//lettura
+		System.out.flush();
+        System.out.println("Lettore\t " + id + " sta leggendo\t " + this.getMsg());
+        
+		mutex.release();
+		
+		//rilascio
+		mutex.acquire();
+		lettoriAmmessi--;
+		System.out.flush();
+    	System.out.println("L:\t lettori ammessi:\t " + lettoriAmmessi);
+		
+		if(lettoriAmmessi== 0 && scrittoriInAttesa > 0) {
+			scrittoriAmmessi = 1;		
+			scrittoriInAttesa --;
+			sScrittori.release();
+		}else {
+	        sLettori.release(); 
+	    }
+		mutex.release();
+	}
+	
+	public synchronized void scrittura(long id) {
+		
+		mutex.acquire();
+		
+		while(lettoriAmmessi > 0 || scrittoriAmmessi > 0) {
+			scrittoriInAttesa ++;
+			System.out.flush();
+	    	System.out.println("S:\t scrittori in attesa:\t " + scrittoriInAttesa);
+	    	
+			mutex.release();
+			//metto in coda
+			sScrittori.acquire();
+			
+			//fine attesa
+			mutex.acquire();
+			scrittoriInAttesa--;
+			System.out.flush();
+	    	System.out.println("S:\t scrittori in attesa:\t " + scrittoriInAttesa);
+		}
+		
+		scrittoriAmmessi ++;
+		System.out.flush();
+    	System.out.println("S:\t scrittori ammessi:\t " + scrittoriAmmessi);		
+    	
+		//scrittura
+		cont++;
+		this.setMsg("mess-" + String.valueOf(cont));
+	    System.out.flush();
+	    System.out.println("Scrittore " + id +" sta scrivendo\t " + this.getMsg());
+		mutex.release();
+		
+		//rilascio
+		mutex.acquire();
+		scrittoriAmmessi--;
+		System.out.flush();
+    	System.out.println("S:\t scrittori ammessi:\t " + scrittoriAmmessi);
+    	
+		if(lettoriInAttesa > 0) {
+			sLettori.release();
+			lettoriAmmessi = lettoriInAttesa;
+			lettoriInAttesa = 0;
+			
+		}else if(scrittoriInAttesa > 0) {
+			sScrittori.release();
+			scrittoriAmmessi ++;
+			scrittoriInAttesa--;
+		}
+		
+		mutex.release();
+	}
+}
+
+
+
+/*
+OLD CODE
+public synchronized void lettura(long id){
 		
 		System.out.println("metodo lettura");
 		
@@ -54,11 +156,18 @@ public class Buffer {
  	 
 	    //se l'accesso è sicuramente libero, allora accedi
 	    if(scrittoriInAttesa == 0 && scrittoriAmmessi == 0){
+	    	
+	    	System.out.flush();
+	    	System.out.println("lettori ammessi: " + lettoriAmmessi);
 	    	lettoriAmmessi++;
 	    	accedi = true;
+	    	sScrittori.acquire();  //prova, prende il lock degli scrittori
 	    	
 	    //altrimenti attendi	
 	    }else{
+	    	
+	    	System.out.flush();
+	    	System.out.println("lettori in attesa: " + lettoriInAttesa);
 	    	lettoriInAttesa ++;
 	    	//sLettori.acquire();
 	    }	   
@@ -96,7 +205,7 @@ public class Buffer {
 	    mutex.release();
 	 };
 	    
-	 /*public synchronized void stopLettura() {
+	 public synchronized void stopLettura() {
 	    	
 	    System.out.println("metodo stop lettura");
 	    	
@@ -118,7 +227,7 @@ public class Buffer {
 	    }
 
 	    mutex.release();
-	 };*/
+	 };
 	    
 	    
 	public synchronized void scrittura(long id) {
@@ -130,16 +239,24 @@ public class Buffer {
 	    	
 	   	//se nessuno sta usando la risorsa, fai accedere uno scrittore
 	    if(lettoriAmmessi == 0 && scrittoriAmmessi == 0){
+	    	
+	    	System.out.flush();
+	    	System.out.println("scrittori ammessi: " + scrittoriAmmessi);
 	    	scrittoriAmmessi = 1;
 	    	accedi = true; 
+	    	sScrittori.acquire(); //prova
 	    	
 	    //atrimenti attendi	
 	    }else{
+	    	
+	    	System.out.flush();
+	    	System.out.println("scrittori in attesa: " + scrittoriInAttesa);
 	    	scrittoriInAttesa ++;
 	    	//sScrittori.acquire();
 	    }
 		
 	    mutex.release();
+	    sScrittori.release(); //prova
    	  
 	  //se l'accesso non è stato fatto, sospendi
 	    if(!accedi){		
@@ -172,7 +289,7 @@ public class Buffer {
  
 	};
 	    
-	/*public synchronized void stopScrittura() {
+	public synchronized void stopScrittura() {
 		
 		System.out.println("metodo stop scrittura");
 	    	
@@ -193,6 +310,7 @@ public class Buffer {
 	    }
 	    	 
 	    mutex.release();	    	
-	};*/
+	};
+	
+*/
 
-}

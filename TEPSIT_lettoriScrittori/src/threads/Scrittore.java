@@ -13,15 +13,15 @@ public class Scrittore extends Thread {
     
     @Override
     public void run() {
-    	for(int i = 0; i<5; i++){
-    		// Inizio scrittura dei dati condivisi (su buffer)
+    	for(int i = 0; i<3; i++){
     	
     		buffer.scrittura(this.getId());
-            System.out.println("Scrittura dati condivisi");
-            // Concludi scrittura dei dati condivisi (su buffer) 
-            //buffer.stopScrittura();
-            //accedi = true;
-            //accedi=true;
+            try {
+				this.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}  
     	
     }
