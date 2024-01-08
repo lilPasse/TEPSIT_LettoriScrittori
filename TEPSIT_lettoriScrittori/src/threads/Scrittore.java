@@ -13,13 +13,13 @@ public class Scrittore extends Thread {
     
     @Override
     public void run() {
-    	while(true) {
+    	for(int i = 0; i<5; i++){
     		// Inizio scrittura dei dati condivisi (su buffer)
     	
-    		buffer.scrittura();
+    		buffer.scrittura(this.getId());
             System.out.println("Scrittura dati condivisi");
             // Concludi scrittura dei dati condivisi (su buffer) 
-            buffer.stopScrittura();
+            //buffer.stopScrittura();
             //accedi = true;
             //accedi=true;
     	}  

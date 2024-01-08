@@ -13,12 +13,12 @@ public class Lettore extends Thread {
     
     @Override
     public void run() {
-    	while(true) {
+    	for(int i = 0; i<5; i++) {
     		// Inizio lettura dei dati condivisi (su buffer)
-        	buffer.lettura();
+        	buffer.lettura(this.getId());
             System.out.println("Scrittura dati condivisi");
             // Concludi lettura dei dati condivisi (su buffer) 
-            buffer.stopLettura(); 
+            //buffer.stopLettura(); 
             //accedi = true;
     	}    	    	
    
