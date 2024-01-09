@@ -47,7 +47,7 @@ public class Buffer {
 	}
 
 	
-	public void lettura(long id) throws InterruptedException {
+	public  void lettura(long id) throws InterruptedException {
 		
 		mutex.acquire();
 		accedi = false;
@@ -56,19 +56,18 @@ public class Buffer {
 			lettoriAmmessi ++;
 			accedi = true;
 			System.out.flush();
-	    	System.out.println("L:\t lettori ammessi:\t " + lettoriAmmessi);
+	    	System.out.println("L.if:\t lettori ammessi:\t " + lettoriAmmessi);
 		}else {
 			lettoriInAttesa++;
 			System.out.flush();
-	    	System.out.println("L:\t lettori in attesa:\t " + lettoriInAttesa);
+	    	System.out.println("L.else:\t lettori in attesa:\t " + lettoriInAttesa);
 		}
 		
-		mutex.release();
+		mutex.release();		
 		
 		if(!accedi) {
 			sLettori.acquire();
 		}
-				
 		//accesso in lettura
 		System.out.flush();
         System.out.println("Lettore\t " + id + " sta leggendo\t " + this.getMsg());
@@ -77,14 +76,18 @@ public class Buffer {
 		mutex.acquire();
 		lettoriAmmessi--;
 		System.out.flush();
-    	System.out.println("L:\t lettori ammessi:\t " + lettoriAmmessi);
+    	System.out.println("L.rilascio:\t lettori ammessi:\t " + lettoriAmmessi);
 		
-		if(lettoriAmmessi == 0&& scrittoriInAttesa > 0) {
+		if(lettoriAmmessi == 0 && scrittoriInAttesa > 0) {
 			scrittoriAmmessi = 1;
 			scrittoriInAttesa --;
 			sScrittori.release();
 			System.out.flush();
-	    	System.out.println("L:\t lettori in attesa:\t " + lettoriInAttesa);
+	    	System.out.println("L.if2:\t lettori in attesa:\t " + lettoriInAttesa);
+		}else {
+			lettoriAmmessi = lettoriInAttesa;
+			lettoriInAttesa = 0;
+			sLettori.release();
 		}
 		
 		mutex.release();
@@ -96,16 +99,16 @@ public class Buffer {
 		mutex.acquire();
 		accedi = false;
 		
-		if(lettoriAmmessi == 0 && scrittoriInAttesa == 0) {
+		if(lettoriAmmessi == 0 && scrittoriAmmessi == 0) {
 			scrittoriAmmessi = 1;
 			accedi = true;
 			System.out.flush();
-			System.out.println("S:\t scrittori ammessi:\t " + scrittoriAmmessi);
+			System.out.println("S.if:\t scrittori ammessi:\t " + scrittoriAmmessi);
 			
 		}else {
 			scrittoriInAttesa ++;
 			System.out.flush();
-	    	System.out.println("S:\t scrittori in attesa:\t " + scrittoriInAttesa);
+	    	System.out.println("S.else:\t scrittori in attesa:\t " + scrittoriInAttesa);
 		}
 		
 		mutex.release();
@@ -122,7 +125,9 @@ public class Buffer {
 		
 		//rilascio
 	    mutex.acquire();
-		scrittoriAmmessi = 0;		
+		scrittoriAmmessi = 0;	
+		System.out.flush();
+		System.out.println("S.rilascio:\t scrittori ammessi:\t " + scrittoriAmmessi);
 
 		if(lettoriInAttesa > 0) {
 			lettoriAmmessi = lettoriInAttesa;
@@ -134,8 +139,8 @@ public class Buffer {
 			scrittoriInAttesa --;
 			sScrittori.release();
 			System.out.flush();
-			System.out.println("S:\t scrittori ammessi:\t " + scrittoriAmmessi);
-	    	System.out.println("S:\t scrittori in attesa:\t " + scrittoriInAttesa);
+			System.out.println("S.elseif:\t scrittori ammessi:\t " + scrittoriAmmessi);
+	    	System.out.println("S.elseif:\t scrittori in attesa:\t " + scrittoriInAttesa);
 		}
 		
 		mutex.release();
