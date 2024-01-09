@@ -1,5 +1,6 @@
 package gestionerisorsa;
-//MIO
+import java.util.concurrent.Semaphore;
+//OFFICIAL
 
 //mutua wesclusione su variabili globali
 
@@ -32,9 +33,9 @@ public class Buffer {
 	}
 	
 	//semaforo mutex sulla risorsa
-    private Semaforo mutex = new Semaforo();
-    private Semaforo sLettori = new Semaforo(); //rivedere
-    private Semaforo sScrittori = new Semaforo();			
+    private Semaphore mutex = new Semaphore(1);
+    private Semaphore sLettori = new Semaphore(nLettori); //rivedere
+    private Semaphore sScrittori = new Semaphore(1);			
     
     //synchornized perche devono essere usati in maniera mutualmente esclusiva
 	public String getMsg() {
@@ -46,7 +47,7 @@ public class Buffer {
 	}
 
 	
-	public void lettura(long id) {
+	public void lettura(long id) throws InterruptedException {
 		
 		mutex.acquire();
 		accedi = false;
@@ -90,7 +91,7 @@ public class Buffer {
 		
 	}
 	
-	public synchronized void scrittura(long id) {
+	public synchronized void scrittura(long id) throws InterruptedException {
 		
 		mutex.acquire();
 		accedi = false;

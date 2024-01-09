@@ -15,7 +15,12 @@ public class Lettore extends Thread {
     public void run() {
     	for(int i = 0; i<3; i++) {
     		
-        	buffer.lettura(this.getId());
+        	try {
+				buffer.lettura(this.getId());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	 try {
  				this.sleep(500);
  			} catch (InterruptedException e) {
