@@ -33,11 +33,11 @@ public class Buffer {
 	
 	//semaforo mutex sulla risorsa
     private Semaforo mutex = new Semaforo();
-    private Semaforo sLettori = new Semaforo(nLettori); //rivedere
+    private Semaforo sLettori = new Semaforo(); //rivedere
     private Semaforo sScrittori = new Semaforo();			
     
     //synchornized perche devono essere usati in maniera mutualmente esclusiva
-	public  String getMsg() {
+	public String getMsg() {
 		return msg;		
 	}
 
@@ -67,7 +67,7 @@ public class Buffer {
 		if(!accedi) {
 			sLettori.acquire();
 		}
-		
+				
 		//accesso in lettura
 		System.out.flush();
         System.out.println("Lettore\t " + id + " sta leggendo\t " + this.getMsg());
@@ -120,12 +120,13 @@ public class Buffer {
 	    System.out.println("Scrittore " + id +" sta scrivendo\t " + this.getMsg());
 		
 		//rilascio
-		scrittoriAmmessi = 0;
-		
+	    mutex.acquire();
+		scrittoriAmmessi = 0;		
+
 		if(lettoriInAttesa > 0) {
-			sLettori.release();
 			lettoriAmmessi = lettoriInAttesa;
 			lettoriInAttesa = 0;
+			sLettori.release();			
 			
 		}else if(scrittoriInAttesa > 0) {
 			scrittoriAmmessi ++;
