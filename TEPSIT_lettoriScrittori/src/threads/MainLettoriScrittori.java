@@ -12,11 +12,13 @@ public class MainLettoriScrittori {
         // Creazione e avvio dei thread lettori e scrittori
         for (int i = 0; i < NUM; i++) {
         	
+        	 Scrittore scrittore = new Scrittore(buffer);
+             scrittore.start();
+             
         	 Lettore lettore = new Lettore(buffer);
              lettore.start();
              
-             Scrittore scrittore = new Scrittore(buffer);
-             scrittore.start();
+            
             
         }
     }
