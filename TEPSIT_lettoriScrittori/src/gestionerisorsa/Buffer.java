@@ -15,26 +15,31 @@ public class Buffer {
 	 * condivisov e quindi delle attivita in corso.
 	*/
 	
+	
+	 private int nLettori;
+	 
+	 private Boolean accedi;
 	 private int lettoriAmmessi;
 	 private int lettoriInAttesa;
 	 private int scrittoriAmmessi;
 	 private int scrittoriInAttesa;
-	 private Boolean accedi;
-	 private int nLettori;
+	 
 	 	    
 	public Buffer(int num) {
+		
 		this.msg = " ";
 		this.nLettori= num;
+		this.cont = 0;
+		
 		this.lettoriAmmessi= 0;
 		this.lettoriInAttesa = 0;
 		this.scrittoriAmmessi = 0;
 		this.scrittoriInAttesa = 0;
-		this.cont = 0;
+		
 	}
-	
-	//semaforo mutex sulla risorsa
+		
     private Semaphore mutex = new Semaphore(1);
-    private Semaphore sLettori = new Semaphore(nLettori); //rivedere
+    private Semaphore sLettori = new Semaphore(nLettori); 
     private Semaphore sScrittori = new Semaphore(1);			
     
     //synchornized perche devono essere usati in maniera mutualmente esclusiva
@@ -56,11 +61,11 @@ public class Buffer {
 			lettoriAmmessi ++;
 			accedi = true;
 			System.out.flush();
-	    	System.out.println("L.if:\t lettori ammessi:\t " + lettoriAmmessi);
+	    //	System.out.println("L.if:\t " + cont + "\tlettori ammessi:\t " + lettoriAmmessi);
 		}else {
 			lettoriInAttesa++;
 			System.out.flush();
-	    	System.out.println("L.else:\t lettori in attesa:\t " + lettoriInAttesa);
+	    //	System.out.println("L.else:\t" + cont + "\tlettori in attesa:\t " + lettoriInAttesa);
 		}
 		
 		mutex.release();		
@@ -70,7 +75,7 @@ public class Buffer {
 		}
 		//accesso in lettura
 		System.out.flush();
-        System.out.println("Lettore\t " + id + " sta leggendo\t " + this.getMsg());
+        System.out.println("Lettore " + id + " sta leggendo " + this.getMsg());
 		
 		//rilascio
 		mutex.acquire();
@@ -81,7 +86,7 @@ public class Buffer {
 			scrittoriInAttesa --;
 			sScrittori.release();
 			System.out.flush();
-	    	System.out.println("L.if2:\t lettori in attesa:\t " + lettoriInAttesa);
+	    //	System.out.println("L.if2:\t" + cont + "\tlettori in attesa:\t " + lettoriInAttesa);
 		}
 		mutex.release();
 		
@@ -96,12 +101,12 @@ public class Buffer {
 			scrittoriAmmessi = 1;
 			accedi = true;
 			System.out.flush();
-			System.out.println("S.if:\t scrittori ammessi:\t " + scrittoriAmmessi);
+			//System.out.println("S.if:\t" + cont + "\tscrittori ammessi:\t " + scrittoriAmmessi);
 			
 		}else {
 			scrittoriInAttesa ++;
 			System.out.flush();
-	    	System.out.println("S.else:\t scrittori in attesa:\t " + scrittoriInAttesa);
+	    	//System.out.println("S.else:\t"+ cont + "\tscrittori in attesa:\t " + scrittoriInAttesa);
 		}
 		
 		mutex.release();
@@ -114,7 +119,7 @@ public class Buffer {
 		cont++;
 		this.setMsg("mess-" + String.valueOf(cont));
 	    System.out.flush();
-	    System.out.println("Scrittore " + id +" sta scrivendo\t " + this.getMsg());
+	    System.out.println("Scrittore: " + id + " sta scrivendo " + this.getMsg());
 		
 		//rilascio
 	    mutex.acquire();
@@ -128,10 +133,11 @@ public class Buffer {
 		}else if(scrittoriInAttesa > 0) {
 			scrittoriAmmessi ++;
 			scrittoriInAttesa --;
+						
 			sScrittori.release();
 			System.out.flush();
-			System.out.println("S.elseif:\t scrittori ammessi:\t " + scrittoriAmmessi);
-	    	System.out.println("S.elseif:\t scrittori in attesa:\t " + scrittoriInAttesa);
+		//	System.out.println("S.eif:\t" + cont + "\tscrittori ammessi:\t" + scrittoriAmmessi);
+	    //	System.out.println("S.eif:\t" + cont + "\tscrittori in attesa:\t " + scrittoriInAttesa);
 		}
 		
 		mutex.release();
