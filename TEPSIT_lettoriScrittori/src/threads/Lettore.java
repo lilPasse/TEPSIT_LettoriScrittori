@@ -1,6 +1,7 @@
 package threads;
 import gestionerisorsa.Buffer;
 
+
 public class Lettore extends Thread {
     private Buffer buffer;
 
