@@ -1,4 +1,3 @@
-
 package gestionerisorsa;
 import java.util.concurrent.Semaphore;
 
@@ -7,6 +6,11 @@ public class Buffer {
 	private String msg;
 	private int cont;
 	private int nLettori;
+	
+	/* dato che devono essere variabili condivise, le seguenti variabili sono
+	 * qua all'interno della classe buffer per tenere traccia del suo stato 
+	 * condiviso e quindi delle attivita in corso.
+	 */
 	
 	private Boolean accedi;
 	private int lettoriAmmessi;

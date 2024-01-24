@@ -1,4 +1,3 @@
-
 package threads;
 import gestionerisorsa.Buffer;
 
