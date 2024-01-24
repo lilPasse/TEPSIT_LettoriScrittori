@@ -8,6 +8,7 @@ public class Scrittore extends Thread {
         this.buffer = buffer;
     }
     
+    
     @Override
     public void run() {
     	//while(true)
