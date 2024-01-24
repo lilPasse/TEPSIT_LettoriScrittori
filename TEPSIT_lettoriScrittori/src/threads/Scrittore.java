@@ -1,3 +1,4 @@
+
 package threads;
 import gestionerisorsa.Buffer;
 
@@ -7,7 +8,6 @@ public class Scrittore extends Thread {
     public Scrittore(Buffer buffer) {
         this.buffer = buffer;
     }
-    
     
     @Override
     public void run() {
@@ -30,3 +30,4 @@ public class Scrittore extends Thread {
     	}  
     }
 }
+
