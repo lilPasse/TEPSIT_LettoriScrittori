@@ -6,7 +6,6 @@ public class Scrittore extends Thread {
     
     public Scrittore(Buffer buffer) {
         this.buffer = buffer;
-        
     }
     
     @Override
